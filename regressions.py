@@ -4,8 +4,8 @@ import pandas as pd
 import statsmodels.api as sm
 from statsmodels.sandbox.regression.gmm import IV2SLS
 
-def prepare_data(correlation_data, shares_data, version):
-    # Filter shares data based on version and calculate averages
+def prepare_shares(correlation_data, shares_data, version):
+    # shares_data is a dict, access version by shares_data[version]
     shares_version = shares_data[version]
     shares_version = shares_version.groupby('iso3').mean().reset_index()
 
@@ -19,20 +19,35 @@ def prepare_data(correlation_data, shares_data, version):
 
     return merged_data
 
+class Regressions:
+    def __init__(self, data, dependent_var, independent_vars):
+        self.data = data
+        self.dependent_var = dependent_var
+        self.independent_vars = independent_vars
 
-def run_regression(dependent_var, independent_vars, data, method='OLS'):
-    # Add constant to independent variables
-    independent_vars = sm.add_constant(independent_vars)
+    def run_regression(self, method, instrument_vars=None):
+        # Add constant to independent variables
+        y = self.data[self.independent_vars]
+        X = self.data[self.dependent_var]
+        X = sm.add_constant(X)
 
-    if method == 'IV':
-        # Perform instrumental variable regression using IV2SLS
-        iv_model = IV2SLS(dependent_var, independent_vars, instrument=data['instrument'])
-        iv_results = iv_model.fit()
-        return iv_results
-    elif method == 'OLS':
-        # Perform ordinary least squares regression
-        ols_model = sm.OLS(dependent_var, independent_vars)
-        ols_results = ols_model.fit()
-        return ols_results
-    else:
-        raise ValueError("Invalid regression method. Choose 'OLS' or 'IV'.")
+        # define instrument(s)
+        if instrument_vars != None:
+            instrument = self.data[instrument_vars]
+            if method == 'IV':
+                raise ValueError("No instrument indicated for IV regression.")
+
+        if method == 'IV':
+            # Perform instrumental variable regression using IV2SLS
+            iv_model = IV2SLS(y, X, instrument=instrument)
+            iv_results = iv_model.fit()
+            return iv_results
+        elif method == 'OLS':
+            # Perform ordinary least squares regression
+            ols_model = sm.OLS(y, X)
+            ols_results = ols_model.fit()
+            return ols_results
+        else:
+            raise ValueError("Invalid regression method. Choose 'OLS' or 'IV'.")
+
+# Regressions(data, dependent_var=['cons_corr'], independent_vars=['prod_cons_shares', 'prod_includeworldcorr']).run_regression(method='OLS').summary()
