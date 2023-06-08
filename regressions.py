@@ -11,7 +11,9 @@ def prepare_shares(correlation_data, shares_data, version):
 
     # Merge correlation data with shares data based on country pairs
     merged_data = pd.merge(correlation_data, shares_version, left_on='iso3_firstcountry', right_on='iso3', suffixes=('_first', '_second'))
-    merged_data = merged_data.drop('iso3', axis=1)
+    merged_data = pd.merge(merged_data, shares_version, left_on='iso3_secondcountry', right_on='iso3', suffixes=('_first', '_second'))
+
+    merged_data = merged_data.drop(['iso3_first', 'iso3_second'], axis=1)
 
     # Calculate the product columns for import and export shares
     merged_data['prod_import'] = merged_data['Import USD_first'] * merged_data['Import USD_second'] + merged_data['Import EUR_first'] * merged_data['Import EUR_second']
@@ -27,8 +29,8 @@ class Regressions:
 
     def run_regression(self, method, instrument_vars=None):
         # Add constant to independent variables
-        y = self.data[self.independent_vars]
-        X = self.data[self.dependent_var]
+        y = self.data[self.dependent_var]
+        X = self.data[self.independent_vars]
         X = sm.add_constant(X)
 
         # define instrument(s)
@@ -44,7 +46,7 @@ class Regressions:
             return iv_results
         elif method == 'OLS':
             # Perform ordinary least squares regression
-            ols_model = sm.OLS(y, X)
+            ols_model = sm.OLS(y, X, missing='drop')
             ols_results = ols_model.fit()
             return ols_results
         else:
