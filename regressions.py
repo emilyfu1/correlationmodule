@@ -17,8 +17,8 @@ def prepare_shares(correlation_data, shares_data, version):
     merged_data = merged_data.drop(['iso3_first', 'iso3_second'], axis=1)
 
     # Calculate the product columns for import and export shares
-    merged_data['prod_import'] = merged_data['Import USD_first'] * merged_data['Import USD_second'] + merged_data['Import EUR_first'] * merged_data['Import EUR_second']
-    merged_data['prod_export'] = merged_data['Export USD_first'] * merged_data['Export USD_second'] + merged_data['Export EUR_first'] * merged_data['Export EUR_second']
+    merged_data['prod_import'] = merged_data['Import USD_first']/100 * merged_data['Import USD_second']/100 + merged_data['Import EUR_first']/100 * merged_data['Import EUR_second']/100
+    merged_data['prod_export'] = merged_data['Export USD_first']/100 * merged_data['Export USD_second']/100 + merged_data['Export EUR_first']/100 * merged_data['Export EUR_second']/100
 
     return merged_data
 
