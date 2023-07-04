@@ -1,5 +1,3 @@
-# DRAFT stuff (BASICALLY PSEUDOCODE)
-
 import pandas as pd
 import statsmodels.api as sm
 from statsmodels.sandbox.regression.gmm import IV2SLS
@@ -29,14 +27,17 @@ class Regressions:
         self.independent_vars = independent_vars
 
     def run_regression(self, method, instrument_vars=None):
+        # drop missings (by row)
+        input_data = self.data.dropna()
+
         # Add constant to independent variables
-        y = self.data[self.dependent_var]
-        X = self.data[self.independent_vars]
+        y = input_data[self.dependent_var]
+        X = input_data[self.independent_vars]
         X = sm.add_constant(X)
 
         # define instrument(s)
         if instrument_vars != None:
-            instrument = self.data[instrument_vars]
+            instrument = input_data[instrument_vars]
         
         if instrument_vars == None and method == 'IV':
             raise ValueError("No instrument indicated for IV regression.")
