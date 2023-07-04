@@ -50,6 +50,7 @@ class Regressions:
             plt.text(0.01, 0.05, str(iv_results.summary()), {'fontsize': 10}, fontproperties = 'monospace')
             plt.axis('off')
             plt.tight_layout()
+            plt.show()
             return iv_results
 
         elif method == 'OLS':
@@ -60,6 +61,7 @@ class Regressions:
             plt.text(0.01, 0.05, str(ols_results.summary()), {'fontsize': 10}, fontproperties = 'monospace')
             plt.axis('off')
             plt.tight_layout()
+            plt.show()
             return ols_results
 
         else:
