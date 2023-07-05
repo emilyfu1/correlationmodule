@@ -1,6 +1,6 @@
 import pandas as pd
 import statsmodels.api as sm
-from statsmodels.sandbox.regression.gmm import IV2SLS
+from linearmodels.iv import IV2SLS, IVLIML, IVGMM
 import matplotlib.pyplot as plt
 
 def prepare_shares(correlation_data, shares_data, version):
@@ -26,7 +26,7 @@ class Regressions:
         self.dependent_var = dependent_var
         self.independent_vars = independent_vars
 
-    def run_regression(self, method, instrument_vars=None):
+    def run_regression(self, method, instrument_vars=None, iv_type='2SLS'):
         # drop missings (by row)
         input_data = self.data.dropna()
 
@@ -43,25 +43,44 @@ class Regressions:
             raise ValueError("No instrument indicated for IV regression.")
 
         if method == 'IV':
-            # Perform instrumental variable regression using IV2SLS
-            iv_model = IV2SLS(y, X, instrument=instrument)
-            iv_results = iv_model.fit()
-            plt.rc('figure', figsize=(8, 5))
-            plt.text(0.01, 0.05, str(iv_results.summary()), {'fontsize': 10}, fontproperties = 'monospace')
-            plt.axis('off')
-            plt.tight_layout()
-            plt.show()
+            # Perform instrumental variable regression using IV2SLS/ML
+            if iv_type == '2SLS': 
+                iv_model = IV2SLS(dependent=y, exog=None, endog=X, instruments=instrument)
+                iv_results = iv_model.fit()
+                # plt.rc('figure', figsize=(8, 5))
+                # plt.text(0.01, 0.05, str(iv_results.summary()), {'fontsize': 10}, fontproperties = 'monospace')
+                # plt.axis('off')
+                # plt.tight_layout()
+                # plt.show()
+            elif iv_type == 'ML':
+                iv_model = IVLIML(dependent=y, exog=None, endog=X, instruments=instrument)
+                iv_results = iv_model.fit()
+                # plt.rc('figure', figsize=(8, 5))
+                # plt.text(0.01, 0.05, str(iv_results.summary()), {'fontsize': 10}, fontproperties = 'monospace')
+                # plt.axis('off')
+                # plt.tight_layout()
+                # plt.show()
+            elif iv_type == 'GMM':
+                iv_model = IVGMM(dependent=y, exog=None, endog=X, instruments=instrument)
+                iv_results = iv_model.fit()
+                # plt.rc('figure', figsize=(8, 5))
+                # plt.text(0.01, 0.05, str(iv_results.summary()), {'fontsize': 10}, fontproperties = 'monospace')
+                # plt.axis('off')
+                # plt.tight_layout()
+                # plt.show()
+            else:
+                raise ValueError("Indicate 2SLS, ML, OR GMM estimation method")
             return iv_results
 
         elif method == 'OLS':
             # Perform ordinary least squares regression
             ols_model = sm.OLS(y, X, missing='drop')
             ols_results = ols_model.fit()
-            plt.rc('figure', figsize=(8, 5))
-            plt.text(0.01, 0.05, str(ols_results.summary()), {'fontsize': 10}, fontproperties = 'monospace')
-            plt.axis('off')
-            plt.tight_layout()
-            plt.show()
+            # plt.rc('figure', figsize=(8, 5))
+            # plt.text(0.01, 0.05, str(ols_results.summary()), {'fontsize': 10}, fontproperties = 'monospace')
+            # plt.axis('off')
+            # plt.tight_layout()
+            # plt.show()
             return ols_results
 
         else:
