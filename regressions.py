@@ -47,27 +47,27 @@ class Regressions:
             if iv_type == '2SLS': 
                 iv_model = IV2SLS(dependent=y, exog=None, endog=X, instruments=instrument)
                 iv_results = iv_model.fit()
-                # plt.rc('figure', figsize=(8, 5))
-                # plt.text(0.01, 0.05, str(iv_results.summary()), {'fontsize': 10}, fontproperties = 'monospace')
-                # plt.axis('off')
-                # plt.tight_layout()
-                # plt.show()
+                plt.rc('figure', figsize=(8, 5))
+                plt.text(0.01, 0.05, str(iv_results), {'fontsize': 10}, fontproperties = 'monospace')
+                plt.axis('off')
+                plt.tight_layout()
+                plt.show()
             elif iv_type == 'ML':
                 iv_model = IVLIML(dependent=y, exog=None, endog=X, instruments=instrument)
                 iv_results = iv_model.fit()
-                # plt.rc('figure', figsize=(8, 5))
-                # plt.text(0.01, 0.05, str(iv_results.summary()), {'fontsize': 10}, fontproperties = 'monospace')
-                # plt.axis('off')
-                # plt.tight_layout()
-                # plt.show()
+                plt.rc('figure', figsize=(8, 5))
+                plt.text(0.01, 0.05, str(iv_results), {'fontsize': 10}, fontproperties = 'monospace')
+                plt.axis('off')
+                plt.tight_layout()
+                plt.show()
             elif iv_type == 'GMM':
                 iv_model = IVGMM(dependent=y, exog=None, endog=X, instruments=instrument)
                 iv_results = iv_model.fit()
-                # plt.rc('figure', figsize=(8, 5))
-                # plt.text(0.01, 0.05, str(iv_results.summary()), {'fontsize': 10}, fontproperties = 'monospace')
-                # plt.axis('off')
-                # plt.tight_layout()
-                # plt.show()
+                plt.rc('figure', figsize=(8, 5))
+                plt.text(0.01, 0.05, str(iv_results), {'fontsize': 10}, fontproperties = 'monospace')
+                plt.axis('off')
+                plt.tight_layout()
+                plt.show()
             else:
                 raise ValueError("Indicate 2SLS, ML, OR GMM estimation method")
             return iv_results
@@ -76,14 +76,13 @@ class Regressions:
             # Perform ordinary least squares regression
             ols_model = sm.OLS(y, X, missing='drop')
             ols_results = ols_model.fit()
-            # plt.rc('figure', figsize=(8, 5))
-            # plt.text(0.01, 0.05, str(ols_results.summary()), {'fontsize': 10}, fontproperties = 'monospace')
-            # plt.axis('off')
-            # plt.tight_layout()
-            # plt.show()
+            plt.rc('figure', figsize=(8, 5))
+            plt.text(0.01, 0.05, str(ols_results.summary()), {'fontsize': 10}, fontproperties = 'monospace')
+            plt.axis('off')
+            plt.tight_layout()
+            plt.show()
             return ols_results
 
         else:
             raise ValueError("Invalid regression method. Choose 'OLS' or 'IV'.")
 
-# Regressions(data, dependent_var=['cons_corr'], independent_vars=['prod_cons_shares', 'prod_includeworldcorr']).run_regression(method='OLS').summary()
