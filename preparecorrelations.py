@@ -140,14 +140,13 @@ def get_from_imf(query_key):
     return datawide
 
 class Prepare_Correlations:
-    def __init__(self, data, detrending, countries):
+    def __init__(self, data, detrending, countries=None):
         # whatever measure of output is desired for use (we can use GDP, consumption industrial production, etc)
         self.data = data
 
         # which detrending technique you want to use (first difference, fourth difference, linear, HP)
         self.detrending = detrending
 
-        # the list of countries to use
         self.countries = countries
 
     def tell_me_about_it(self):
@@ -162,7 +161,8 @@ class Prepare_Correlations:
             self.data = self.data.loc[(self.data.index >= pd.to_datetime(start_date, format='%Y-%m-%d')) & (self.data.index <= pd.to_datetime(end_date, format='%Y-%m-%d'))]
 
         # restrict list of countries as specified
-        self.data = self.data.drop(columns = [col for col in self.data if col not in self.countries], axis=1)
+        if self.countries != None:
+            self.data = self.data.drop(columns = [col for col in self.data if col not in self.countries], axis=1)
 
         # take natural log
         for country in self.data:
