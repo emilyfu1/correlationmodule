@@ -6,6 +6,7 @@ import statsmodels.tsa.x13 as X13
 import pycountry
 import seaborn as sb
 import matplotlib.pyplot as plt
+from statsmodels.tsa.tsatools import detrend
 
 import requests
 
@@ -69,7 +70,7 @@ def LTDetrend(df):
         LT = LT.set_axis(to_detrend.index.copy())
         
         # rewrite data with cyclical component
-        df[country] = LT
+        df.loc[:,country] = LT
     return df
 
 def HPDetrend(df):
@@ -82,7 +83,19 @@ def HPDetrend(df):
 
         # rewrite data with cyclical component
         # instead of rewriting the data, how do i save my output to a new dataframe (in the right corresponding location)?
-        df[country] = HP_cycle
+        df.loc[:,country] = HP_cycle
+    return df
+
+def QuadraticDetrend(df):
+    for country in df:
+        to_detrend = df[country]
+
+        # detrend the data
+        QT = pd.Series(detrend(to_detrend, order=2))
+        QT = QT.set_axis(to_detrend.index.copy())
+        
+        # rewrite data with cyclical component
+        df.loc[:,country] = QT
     return df
 
 def get_from_oecd(sdmx_query):
@@ -166,7 +179,7 @@ class Prepare_Correlations:
 
         # take natural log
         for country in self.data:
-            self.data[country] = np.log(self.data[country])
+            self.data.loc[:,country] = np.log(self.data[country])
 
         # Apply the selected detrending technique
         if self.detrending == 'HP Filter':
@@ -183,8 +196,13 @@ class Prepare_Correlations:
 
         elif self.detrending == 'fourth difference':
             self.data = self.data.diff(periods=3)
+        
+        elif self.detrending == "quadratic detrending":
+            # Apply linear detrending
+            self.data = QuadraticDetrend(self.data)
+
         else:
-            raise ValueError("Invalid detrending technique. Choose 'HP Filter', 'linear detrending', 'fourth difference', or 'first difference'.")
+            raise ValueError("Invalid detrending technique. Choose 'HP Filter', 'linear detrending', 'quadratic detrending', 'fourth difference', or 'first difference'.")
         
         return self
     
