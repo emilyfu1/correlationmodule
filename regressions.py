@@ -10,7 +10,7 @@ from dotenv import dotenv_values, find_dotenv
 import os
 importlib.reload(pc)
 importlib.reload(reg)
-
+from IPython.display import HTML
 
 # this looks for your configuration file and then reads it as a dictionary
 config = dotenv_values(find_dotenv())
@@ -21,6 +21,11 @@ cleandatapath = os.path.abspath(config["CLEANDATA"]) + '\\'
 rawdatapath = os.path.abspath(config["RAWDATA"]) + '\\'
 ocadatapath = os.path.abspath(config["FRANKELROSEDATA"]) + '\\'
 gravitydatapath = os.path.abspath(config["GRAVITYDATA"]) + '\\'
+
+# use to make a nice results table
+def pretty_print(df):
+    for_display = HTML(df.to_html().replace("\\n","<br>"))
+    return for_display
 
 def prepare_shares(correlation_data, shares_data, version):
     # shares_data is a dict, access version by shares_data[version]
