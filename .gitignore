@@ -5,4 +5,6 @@
 
 *.exe
 
+*.tex
+
 **/__pycache__/
