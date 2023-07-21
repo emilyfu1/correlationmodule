@@ -1,8 +1,8 @@
 import os
 import numpy as np
 
-#code with example output -- python to latex
-def create_latex_table(regression_objects, rhs_variables, lhs_variable, filepath, toggle):
+# [GABRIELLE] code with example output -- python to latex
+def create_latex_table(regression_objects, rhs_variables, lhs_variable, toggle, filename, filepath=os.getcwd()):
     '''
     create latex table that showcases regression output(s).
     
@@ -10,10 +10,13 @@ def create_latex_table(regression_objects, rhs_variables, lhs_variable, filepath
         - regression_objects (list of regression objects): regression output -- the coefficient and standard error associated with each rhs_variable.
         - rhs_variables (list of strings): names of independent variables (rhs variables) in the regression 
         - lhs_variable (string): name of dependent variable (lhs variable) in the regression
-        - filepath (string): path and file name where the resulting LaTeX table (.tex file) will be saved
         - toggle (boolean): whether the Latex file has opening and closing arguments
+        - [EMILY: add filename parameter] filename (string): desired name of saved LaTeX file
+        - [EMILY: change filepath parameter to include only path] filepath (string): path name where the resulting LaTeX table (.tex file) will be saved
         
     '''
+    inputpath = os.path.abspath(filepath) + '\\' + filename + '.tex'
+
     column_data = []
     for i in range(len(regression_objects)):
         coefficient = regression_objects[i].params[1:] 
@@ -47,8 +50,8 @@ def create_latex_table(regression_objects, rhs_variables, lhs_variable, filepath
             row_N.append(number_of_observations)
                 
     
-    os.makedirs(os.path.dirname(filepath), exist_ok=True) 
-    with open(filepath, "w") as file:
+    os.makedirs(os.path.dirname(inputpath), exist_ok=True) 
+    with open(inputpath, "w") as file:
         
         if toggle:
             file.write("\documentclass[12pt]{article}")
@@ -197,5 +200,3 @@ def create_latex_table(regression_objects, rhs_variables, lhs_variable, filepath
         
         if toggle:
             file.write("\end{document}")  
-                    
-# create_latex_table(ahhh_fancy_data, ['prod_export', 'prod_import', 'prod_worldconscorr', 'prod_ngdpshare', 'prod_cent', 'bti'], "gdpcorr", "boc/toggleTtrue.tex", True)
