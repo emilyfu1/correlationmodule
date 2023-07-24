@@ -126,7 +126,7 @@ class Regressions:
         elif method == 'OLS':
             # perform ordinary least squares regression
             ols_model = sm.OLS(y, X, missing='drop')
-            ols_results = ols_model.fit()
+            ols_results = ols_model.fit(cov_type='HC3')
             # plt.text(0.5, 1.08, self.data.name, horizontalalignment='center',fontsize=15)
             # plt.rc('figure', figsize=(8, 5))
             # plt.text(0.01, 0.05, str(ols_results.summary()), {'fontsize': 10}, fontproperties = 'monospace')
